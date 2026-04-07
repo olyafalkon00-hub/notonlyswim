@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Какой ты вомбат сегодня?</title>
+
+ <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffe3ec, #ffd6a5, #fff1c1);
+    overflow: hidden;
+  }
+
+  .container {
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.88);
+    padding: 30px 20px 30px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(6px);
+    position: relative;
+    z-index: 2;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-size: 36px;
+    line-height: 1.1;
+    color: #2d1b3d;
+  }
+
+  .subtitle {
+    margin: 0 0 22px;
+    font-size: 18px;
+    color: #6b5578;
+  }
+
+  button {
+    border: none;
+    background: linear-gradient(135deg, #ff4f87, #ff7b54);
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 16px 28px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 25px rgba(255, 95, 135, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.2s ease;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+  }
+
+  button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  #spinner {
+    margin-top: 22px;
+    min-height: 42px;
+    font-size: 30px;
+    font-weight: 800;
+    color: #ed8ae5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .spinning {
+    animation: pulse 0.4s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.12); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.5; }
+  }
+
+  #result {
+    margin-top: 12px;
+  }
+
+  #result h2 {
+    margin: 0 0 14px;
+    font-size: 24px;
+    color: #2d1b3d;
+  }
+
+  #result img {
+    width: 100%;
+    max-width: 290px;
+    height: 290px;
+    object-fit: cover;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+  }
+
+  .confetti {
+    position: fixed;
+    top: -20px;
+    font-size: 32px;
+    animation: fall linear forwards;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @keyframes fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(110vh) rotate(720deg);
+      opacity: 0;
+    }
+  }
+</style>
+     
+  
+</head>
+<body>
+
+  <div class="container">
+    <h1>Какой ты вомбат сегодня?</h1>
+    <div class="subtitle">Нажми кнопку и узнай свою сегодняшнюю вомбат-сущность</div>
+
+    <button id="startBtn" onclick="showWombat()">Узнать</button>
+
+    <div id="spinner"></div>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const wombats = [
+      { name: "Деловой вомбат", img: "delovoy.jpg" },
+      { name: "Вомбат-Кайфарик", img: "kaif.jpg" },
+      { name: "Почесунчик", img: "cheshetsya.jpg" },
+      { name: "Новогодний вомбат", img: "ny.jpg" },
+      { name: "Сплюшкин", img: "sleep.jpg" },
+      { name: "Праздничный вомбат", img: "prazdnik.jpg" },
+      { name: "Уставший вомбат", img: "tired.jpg" }
+    ];
+
+    const spinner = document.getElementById("spinner");
+    const result = document.getElementById("result");
+    const button = document.getElementById("startBtn");
+
+    function showWombat() {
+      button.disabled = true;
+      result.innerHTML = "";
+      spinner.classList.add("spinning");
+
+      let count = 0;
+
+      const spinInterval = setInterval(() => {
+        const random = Math.floor(Math.random() * wombats.length);
+        spinner.textContent = wombats[random].name;
+        count++;
+      }, 120);
+
+      setTimeout(() => {
+        clearInterval(spinInterval);
+        spinner.classList.remove("spinning");
+
+        const finalRandom = Math.floor(Math.random() * wombats.length);
+        const wombat = wombats[finalRandom];
+
+        spinner.textContent = "Твой результат:";
+        result.innerHTML = `
+          <h2>${wombat.name}</h2>
+          <img src="${wombat.img}" alt="${wombat.name}">
+        `;
+
+        launchConfetti();
+        button.disabled = false;
+      }, 5000);
+    }
+
+    function launchConfetti() {
+      const emojis = ["🎉", "✨", "💖", "🎊", "🔥", "🌟"];
+
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+        confetti.style.fontSize = (Math.random() * 18 + 18) + "px";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(() => {
+          confetti.remove();
+        }, 4000);
+      }
+    }
+  </script>
+
+</body>
+</html>
